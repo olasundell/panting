@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL94Dialect
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    database-platform: POSTGRESQL
+    database: postgresql
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://localhost/pant
+    username: pant
+    password: pant
+    driver-class-name: org.postgresql.Driver
+    name: pant

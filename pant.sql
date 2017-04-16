@@ -1,37 +1,48 @@
+drop table IF EXISTS customer CASCADE;
 create table customer (
-	id integer primary key,
+	id serial primary key,
 	address varchar(200),
 	email varchar(100)
 );
 
+drop table IF EXISTS container cascade;
 create table container(
-	id integer primary key,
+	id serial primary key,
 	description varchar(300)
 );
 
+drop table IF EXISTS container_price CASCADE;
 create table container_price(
-	id integer primary key,
+	id serial primary key,
 	container_id integer,
 	valid_from date,
 	valid_to date,
-	amount money
+	amount money,
+	FOREIGN KEY (container_id) REFERENCES container(id)
 );
 
+drop table IF EXISTS panting CASCADE;
 create table panting(
-	id integer primary key,
+	id serial primary key,
 	customer_id integer,
-	made_at date
+	made_at date,
+	FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
 
-create table panting_containers(
+drop table IF EXISTS panting_container CASCADE;
+create table panting_container(
 	panting_id integer,
 	container_id integer,
-	number_of_items integer
+	number_of_items integer,
+	FOREIGN KEY (panting_id) REFERENCES panting(id),
+	FOREIGN KEY (container_id) REFERENCES container(id)
 );
 
+drop table IF EXISTS invoice CASCADE;
 create table invoice (
-	id integer primary key,
+	id serial primary key,
 	customer_id integer,
 	issued_at date,
-	amount money
+	amount money,
+	FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
