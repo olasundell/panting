@@ -1,6 +1,7 @@
 drop table IF EXISTS customer CASCADE;
 create table customer (
 	id serial primary key,
+	name varchar(200),
 	address varchar(200),
 	email varchar(100)
 );
