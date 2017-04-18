@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +29,7 @@ public class Container {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String description;
-	@OneToMany(mappedBy = "container")
+	@OneToMany(mappedBy = "container", cascade = CascadeType.ALL)
 	private List<ContainerPrice> price;
 	@JsonPOJOBuilder(withPrefix = "")
 	public static class ContainerBuilder {}

@@ -10,6 +10,10 @@ buildscript {
 	}
 }
 
+plugins {
+	id "com.zoltu.git-versioning" version "3.0.3"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -27,9 +31,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-undertow')
 	compile group: 'org.hibernate', name: 'hibernate-java8'
-//	compile group: 'org.postgresql', name: 'postgresql', version: '42.0.0'
 	runtime group: 'com.zaxxer', name: 'HikariCP', version: '2.6.1'
 	runtime('org.postgresql:postgresql')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testRuntime group: 'com.h2database', name: 'h2'
 }

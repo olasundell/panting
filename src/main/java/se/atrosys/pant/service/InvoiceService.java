@@ -3,9 +3,12 @@ package se.atrosys.pant.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.atrosys.pant.model.Invoice;
+import se.atrosys.pant.model.Panting;
 import se.atrosys.pant.repository.CustomerRepository;
 import se.atrosys.pant.repository.InvoiceRepository;
 import se.atrosys.pant.repository.PantingRepository;
+
+import java.util.List;
 
 /**
  * TODO write documentation
@@ -27,6 +30,8 @@ public class InvoiceService {
 	}
 
 	public Invoice getInvoice(Integer customerId, Integer year, Integer month) {
+		List<Panting> found = pantingRepository.findByCustomerId(customerId);
+
 		return null;
 	}
 }

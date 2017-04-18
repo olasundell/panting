@@ -16,7 +16,6 @@ import se.atrosys.pant.repository.PantingRepository;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * TODO write documentation
@@ -57,15 +56,30 @@ public class PopulateConfig {
 		logger.debug("Customer {}", ladlas);
 
 		Container burk = containerRepository.save(Container.builder()
-				.description("33 ml aluminium")
-				.price(Arrays.asList(buildPrice(1.0, LocalDate.of(2010, 1, 1), LocalDate.of(2015, 12, 31)),
-						buildPrice(2.0, LocalDate.of(2016, 1, 1), LocalDate.of(2020, 12, 31))))
+				.description("33 cl aluminium")
+//				.price(Arrays.asList(buildPrice(1.0, LocalDate.of(2010, 1, 1), LocalDate.of(2015, 12, 31)),
+//						buildPrice(2.0, LocalDate.of(2016, 1, 1), LocalDate.of(2020, 12, 31))))
 				.build());
+		burk.setPrice(Arrays.asList(buildPrice(burk, 1.0, LocalDate.of(2010, 1, 1), LocalDate.of(2015, 12, 31)),
+						buildPrice(burk, 2.0, LocalDate.of(2016, 1, 1), LocalDate.of(2020, 12, 31))));
+
+		containerRepository.save(burk);
 
 		logger.debug("Container {}", burk);
 
+		Container flaska = containerRepository.save(Container.builder()
+				.description("50 cl plast")
+				.build());
+
+		flaska.setPrice(Arrays.asList(buildPrice(flaska, 2.0, LocalDate.of(2010, 1, 1), LocalDate.of(2015, 12, 31)),
+				buildPrice(flaska, 3.0, LocalDate.of(2016, 1, 1), LocalDate.of(2020, 12, 31))));
+
+		containerRepository.save(flaska);
+
+		logger.debug("Container {}", flaska);
+
 		Panting first = pantingRepository.save(Panting.builder()
-				.container(Collections.singletonList(burk))
+				.container(Arrays.asList(burk, burk, flaska))
 				.customer(ladlas)
 				.madeAt(LocalDate.of(2012, 3, 12))
 				.build());
@@ -73,8 +87,9 @@ public class PopulateConfig {
 		logger.debug("Panting {}", first);
 	}
 
-	private ContainerPrice buildPrice(Double amount, LocalDate from, LocalDate to) {
+	private ContainerPrice buildPrice(Container container, Double amount, LocalDate from, LocalDate to) {
 		return ContainerPrice.builder()
+				.container(container)
 				.amount(amount)
 				.validFrom(from)
 				.validTo(to)
