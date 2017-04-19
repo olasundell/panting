@@ -57,9 +57,8 @@ public class PopulateConfig {
 
 		Container burk = containerRepository.save(Container.builder()
 				.description("33 cl aluminium")
-//				.price(Arrays.asList(buildPrice(1.0, LocalDate.of(2010, 1, 1), LocalDate.of(2015, 12, 31)),
-//						buildPrice(2.0, LocalDate.of(2016, 1, 1), LocalDate.of(2020, 12, 31))))
 				.build());
+
 		burk.setPrice(Arrays.asList(buildPrice(burk, 1.0, LocalDate.of(2010, 1, 1), LocalDate.of(2015, 12, 31)),
 						buildPrice(burk, 2.0, LocalDate.of(2016, 1, 1), LocalDate.of(2020, 12, 31))));
 

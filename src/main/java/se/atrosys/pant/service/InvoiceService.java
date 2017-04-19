@@ -8,6 +8,7 @@ import se.atrosys.pant.repository.CustomerRepository;
 import se.atrosys.pant.repository.InvoiceRepository;
 import se.atrosys.pant.repository.PantingRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -30,8 +31,23 @@ public class InvoiceService {
 	}
 
 	public Invoice getInvoice(Integer customerId, Integer year, Integer month) {
-		List<Panting> found = pantingRepository.findByCustomerId(customerId);
+		final LocalDate lower = LocalDate.of(year, month, 1);
+		List<Panting> found = pantingRepository.findByCustomerIdAndMadeAtIsBetween(customerId, lower, lower.plusMonths(1).minusDays(1));
 
-		return null;
+		Double sum = found.stream()
+				.mapToDouble(this::toDouble)
+				.sum();
+
+		return Invoice.builder()
+				.amount(sum)
+				.customer(customerRepository.findOne(customerId))
+				.build();
+	}
+
+	private Double toDouble(Panting p) {
+		return p.getContainer()
+				.stream()
+				.mapToDouble(c -> c.getPriceAt(p.getMadeAt()))
+				.sum();
 	}
 }
