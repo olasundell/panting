@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import se.atrosys.pant.model.Container;
 import se.atrosys.pant.model.ContainerPrice;
 import se.atrosys.pant.model.Customer;
+import se.atrosys.pant.model.Invoice;
 import se.atrosys.pant.model.Panting;
 import se.atrosys.pant.repository.ContainerRepository;
 import se.atrosys.pant.repository.CustomerRepository;
@@ -15,6 +16,7 @@ import se.atrosys.pant.repository.PantingRepository;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Arrays;
 
 /**
@@ -84,6 +86,13 @@ public class PopulateConfig {
 				.build());
 
 		logger.debug("Panting {}", first);
+
+		invoiceRepository.save(Invoice.builder()
+				.amount(9.0)
+				.customer(ladlas)
+				.issuedAt(LocalDate.of(2012, 3, 5))
+				.period(YearMonth.of(2012, 2))
+				.build());
 	}
 
 	private ContainerPrice buildPrice(Container container, Double amount, LocalDate from, LocalDate to) {

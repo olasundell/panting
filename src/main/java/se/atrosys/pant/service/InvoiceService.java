@@ -76,4 +76,8 @@ public class InvoiceService {
 		save.setDefinitive(true);
 		return save;
 	}
+
+	public List<Invoice> getAllInvoices(Integer customerId) {
+		return invoiceRepository.findAllByCustomerId(customerId);
+	}
 }
