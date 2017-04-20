@@ -1,6 +1,7 @@
 package se.atrosys.pant.service;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,7 +24,9 @@ import se.atrosys.pant.repository.InvoiceRepository;
 import se.atrosys.pant.repository.PantingRepository;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * TODO write documentation
@@ -33,6 +36,7 @@ import java.util.Arrays;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class InvoiceServiceTest {
 	private final Logger logger  = LoggerFactory.getLogger(this.getClass());
+	private boolean setupAlready = false;
 
 	@Autowired
 	private TestEntityManager entityManager;
@@ -53,26 +57,50 @@ public class InvoiceServiceTest {
 	private PantingRepository pantingRepository;
 
 	private InvoiceService invoiceService;
+	private Customer customer;
+	private Invoice invoice;
 
 	@Test
-	public void shouldCalculateInvoice() throws Exception {
-		setup();
-		invoiceService = new InvoiceService(invoiceRepository, customerRepository, pantingRepository);
-		Invoice result = invoiceService.getInvoice(1, 2012, 3);
+	public void shouldCalculateStatement() throws Exception {
+		Invoice result = invoiceService.getStatement(customer.getId(), 2012, 3);
 		Assert.assertNotNull(result);
 		Assert.assertNotNull(result.getAmount());
 		Assert.assertNotNull(result.getCustomer());
 		Assert.assertEquals(new Double(4.0), result.getAmount());
+		Assert.assertEquals(LocalDate.now(), result.getIssuedAt());
+		Assert.assertEquals(YearMonth.of(2012, 3), result.getPeriod());
 	}
 
-	private void setup() {
-		Customer ladlas = Customer.builder()
+	@Test
+	public void shouldGetInvoice() {
+		Optional<Invoice> invoiceOptional = invoiceService.getInvoice(customer.getId(), 2012, 2);
+		Assert.assertTrue(invoiceOptional.isPresent());
+		Invoice result = invoiceOptional.get();
+
+		Assert.assertTrue(result.getDefinitive());
+		Assert.assertEquals(invoice.getAmount(), result.getAmount());
+	}
+
+	@Test
+	public void shouldCreateInvoice() {
+		Invoice result = invoiceService.createInvoiceForPeriod(customer.getId(), 2012, 3);
+		Assert.assertTrue(result.getDefinitive());
+		Optional<Invoice> invoiceOptional = invoiceService.getInvoice(customer.getId(), 2012, 3);
+		Assert.assertTrue(invoiceOptional.isPresent());
+	}
+
+	@Before
+	public void setup() {
+		if (setupAlready) {
+			return;
+		}
+		customer = Customer.builder()
 				.address("Hemma")
 				.email("foo@bar.it")
 				.name("Ladlas Ladlassen")
 				.build();
 
-		ladlas.setId((Integer) this.entityManager.persistAndGetId(ladlas));
+		customer.setId((Integer) this.entityManager.persistAndGetId(customer));
 
 		Container burk = Container.builder()
 				.description("33 cl aluminium")
@@ -94,7 +122,7 @@ public class InvoiceServiceTest {
 
 		Panting first = Panting.builder()
 				.container(Arrays.asList(burk, burk, flaska))
-				.customer(ladlas)
+				.customer(customer)
 				.madeAt(LocalDate.of(2012, 3, 12))
 				.build();
 
@@ -102,11 +130,24 @@ public class InvoiceServiceTest {
 
 		Panting second = Panting.builder()
 				.container(Arrays.asList(burk, burk, flaska))
-				.customer(ladlas)
+				.customer(customer)
 				.madeAt(LocalDate.of(2012, 4, 1))
 				.build();
 
 		second.setId((Integer) this.entityManager.persistAndGetId(second));
+
+		invoice = Invoice.builder()
+				.amount(9.0)
+				.customer(customer)
+				.issuedAt(LocalDate.of(2012, 3, 5))
+				.period(YearMonth.of(2012, 2))
+				.build();
+
+		invoice.setId((Integer) this.entityManager.persistAndGetId(invoice));
+
+		invoiceService = new InvoiceService(invoiceRepository, customerRepository, pantingRepository);
+
+		setupAlready = true;
 	}
 
 	private ContainerPrice buildPrice(Container container, Double amount, LocalDate from, LocalDate to) {

@@ -19,11 +19,11 @@ public class InvoiceResource {
 		this.service = service;
 	}
 
-	@GetMapping(path="/invoice/{customerId}/{year}/{month}")
-	public Invoice getInvoice(@PathVariable Integer customerId,
+	@GetMapping(path="/statement/{customerId}/{year}/{month}")
+	public Invoice getStatement(@PathVariable Integer customerId,
 	                          @PathVariable Integer year,
 	                          @PathVariable Integer month) {
 
-		return service.getInvoice(customerId, year, month);
+		return service.getStatement(customerId, year, month);
 	}
 }

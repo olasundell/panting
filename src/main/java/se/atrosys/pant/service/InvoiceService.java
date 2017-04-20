@@ -9,7 +9,9 @@ import se.atrosys.pant.repository.InvoiceRepository;
 import se.atrosys.pant.repository.PantingRepository;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * TODO write documentation
@@ -30,9 +32,18 @@ public class InvoiceService {
 		this.pantingRepository = pantingRepository;
 	}
 
-	public Invoice getInvoice(Integer customerId, Integer year, Integer month) {
-		final LocalDate lower = LocalDate.of(year, month, 1);
-		List<Panting> found = pantingRepository.findByCustomerIdAndMadeAtIsBetween(customerId, lower, lower.plusMonths(1).minusDays(1));
+	public Optional<Invoice> getInvoice(Integer customerId, Integer year, Integer month) {
+		final Invoice invoice = invoiceRepository.findByCustomerIdAndPeriod(customerId, YearMonth.of(year, month));
+
+		if (invoice != null) {
+			invoice.setDefinitive(true);
+		}
+
+		return Optional.ofNullable(invoice);
+	}
+
+	public Invoice getStatement(Integer customerId, Integer year, Integer month) {
+		List<Panting> found = getPantings(customerId, year, month);
 
 		Double sum = found.stream()
 				.mapToDouble(this::toDouble)
@@ -40,8 +51,16 @@ public class InvoiceService {
 
 		return Invoice.builder()
 				.amount(sum)
+				.definitive(false)
 				.customer(customerRepository.findOne(customerId))
+				.period(YearMonth.of(year, month))
+				.issuedAt(LocalDate.now())
 				.build();
+	}
+
+	private List<Panting> getPantings(Integer customerId, Integer year, Integer month) {
+		final LocalDate lower = LocalDate.of(year, month, 1);
+		return pantingRepository.findByCustomerIdAndMadeAtIsBetween(customerId, lower, lower.plusMonths(1).minusDays(1));
 	}
 
 	private Double toDouble(Panting p) {
@@ -49,5 +68,12 @@ public class InvoiceService {
 				.stream()
 				.mapToDouble(c -> c.getPriceAt(p.getMadeAt()))
 				.sum();
+	}
+
+	public Invoice createInvoiceForPeriod(Integer customerId, int year, int month) {
+		Invoice invoice = getStatement(customerId, year, month);
+		final Invoice save = invoiceRepository.save(invoice);
+		save.setDefinitive(true);
+		return save;
 	}
 }
