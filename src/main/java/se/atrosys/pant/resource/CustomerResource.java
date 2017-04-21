@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import se.atrosys.pant.model.Customer;
 import se.atrosys.pant.repository.CustomerRepository;
@@ -29,5 +31,10 @@ public class CustomerResource {
 	@GetMapping(path = "/customer/{id}")
 	public Customer getCustomer(@PathVariable Integer id) {
 		return customerRepository.findOne(id);
+	}
+
+	@PostMapping(path = "/customer")
+	public Integer createCustomer(@RequestBody Customer customer) {
+		return customerRepository.save(customer).getId();
 	}
  }
