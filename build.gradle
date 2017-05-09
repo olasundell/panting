@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.2.RELEASE'
+		springBootVersion = '1.5.3.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -15,6 +15,7 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
@@ -25,6 +26,10 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	spockVersion = '1.0-groovy-2.4'
+	groovyVersion = '2.4.8'
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
@@ -37,7 +42,9 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testRuntime group: 'com.h2database', name: 'h2'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
-	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.0-M4'
+//	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.0-M4'
 	// https://mvnrepository.com/artifact/org.testng/testng
-	testCompile group: 'org.testng', name: 'testng', version: '6.11'
+//	testCompile group: 'org.testng', name: 'testng', version: '6.11'
+	compile group:'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
+	testCompile group: 'org.spockframework', name: 'spock-core', version: spockVersion
 }
