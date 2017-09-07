@@ -14,7 +14,7 @@ pipeline {
     }
     stage('dockerize') {
       steps {
-        sh './gradlew buildDocker'
+        sh 'eval $(docker-machine env pant) && ./gradlew buildDocker'
       }
     }
     stage('deploy') {
