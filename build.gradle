@@ -7,6 +7,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath 'org.sgornostal:gradle-docker-plugin:1.5.3'
 	}
 }
 
@@ -18,8 +19,8 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
 
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
@@ -31,13 +32,21 @@ ext {
 	groovyVersion = '2.4.8'
 }
 
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.cloud:spring-cloud-sleuth:1.2.4.RELEASE'
+	}
+}
+
 dependencies {
+	compile 'org.springframework.cloud:spring-cloud-starter-sleuth'
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-undertow')
 	compile group: 'org.hibernate', name: 'hibernate-java8'
 	runtime group: 'com.zaxxer', name: 'HikariCP', version: '2.6.1'
-	runtime('org.postgresql:postgresql')
+//	runtime('org.postgresql:postgresql')
+	runtime group: 'com.h2database', name: 'h2'
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testRuntime group: 'com.h2database', name: 'h2'
@@ -47,4 +56,27 @@ dependencies {
 //	testCompile group: 'org.testng', name: 'testng', version: '6.11'
 	compile group:'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
 	testCompile group: 'org.spockframework', name: 'spock-core', version: spockVersion
+	testCompile group: 'org.awaitility', name: 'awaitility', version: '3.0.0'
+	testCompile group: 'org.awaitility', name: 'awaitility-groovy', version: '3.0.0'
+}
+
+docker {
+	println ZoltuGitVersioning.versionInfo
+	println jar.archivePath
+	println jar.archiveName
+
+	dependsOn bootRepackage
+	imageName = 'pant'
+	buildArgs = ['JAR_NAME': jar.archiveName ]
+	files jar.archivePath
+	host 'tcp://192.168.99.101:2376'
+	run {
+		ports '8123:8123'
+		attach = false
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
+	distributionType = Wrapper.DistributionType.ALL
 }

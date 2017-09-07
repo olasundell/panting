@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -22,7 +24,8 @@ import java.util.List;
  */
 @Entity
 @Builder
-@Data
+@Getter
+@Setter
 @JsonDeserialize(builder = Container.ContainerBuilder.class)
 @NoArgsConstructor
 @AllArgsConstructor

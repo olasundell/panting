@@ -1,18 +1,25 @@
+server:
+  port: 8123
 spring:
   jpa:
     hibernate:
 #      ddl-auto: validate
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL94Dialect
-        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
-    database-platform: POSTGRESQL
-    database: postgresql
+    database: h2
+#    properties:
+#      hibernate:
+#        dialect:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQL94Dialect
+#        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+#    database-platform: POSTGRESQL
+#    database: postgresql
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost/pant
-    username: pant
-    password: pant
-    driver-class-name: org.postgresql.Driver
-    name: pant
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/pant
+#    url: jdbc:postgresql://localhost/pant
+#    username: pant
+#    password: pant
+#    driver-class-name: org.postgresql.Driver
+#    name: pant
