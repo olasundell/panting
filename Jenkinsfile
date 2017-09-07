@@ -19,7 +19,7 @@ pipeline {
     }
     stage('deploy') {
       steps {
-        sh 'eval $(docker-machine env pant) && ./gradlew runDocker '
+        sh 'eval $(docker-machine env pant) && ./gradlew runDocker'
       }
     }
   }
