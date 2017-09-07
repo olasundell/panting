@@ -9,7 +9,7 @@ pipeline {
     stage('test') {
       steps {
         sh './gradlew test'
-        junit 'build/reports/**/*.xml'
+        junit 'build/test-results/test/**/*.xml'
       }
     }
   }
