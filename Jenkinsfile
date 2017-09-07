@@ -12,5 +12,15 @@ pipeline {
         junit 'build/test-results/test/**/*.xml'
       }
     }
+    stage('dockerize') {
+      steps {
+        sh './gradlew buildDocker'
+      }
+    }
+    stage('deploy') {
+      steps {
+        sh './gradlew runDocker'
+      }
+    }
   }
 }
